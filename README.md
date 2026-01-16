@@ -1,5 +1,3 @@
-# EndprojectE-learning
-Hello welcome to end project E-learning
 <!DOCTYPE html>
 <html lang="th">
 <head>
