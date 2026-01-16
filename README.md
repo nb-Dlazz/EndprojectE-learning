@@ -1,2 +1,941 @@
 # EndprojectE-learning
 Hello welcome to end project E-learning
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>E-Learning System — Student & Teacher</title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+  :root{--primary:#4a6cff;
+  --secondary:#6fb1ff;
+  --bg:linear-gradient(135deg,#f4f8ff,#eef5ff);
+  --card:rgba(255,255,255,.9);
+  --border:rgba(74,108,255,.15);
+  --text:#1e293b;
+  --muted:#64748b;
+  --radius:18px;
+  --shadow:0 16px 40px rgba(74,108,255,.18);
+  --transition:.35s cubic-bezier(.4,0,.2,1);
+  --blur:blur(16px);}
+
+.video-wrap{
+  position:relative;
+  padding-top:56.25%;
+  border-radius:14px;
+  overflow:hidden;
+  background:#000;
+}
+.video-wrap iframe{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  border:0;
+}
+.yt-overlay{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+}
+.yt-overlay a{
+  pointer-events:auto;
+  background:rgba(0,0,0,.7);
+  color:#fff;
+  padding:10px 18px;
+  border-radius:999px;
+  text-decoration:none;
+}
+.auto-img{
+  max-width:100%;
+  border-radius:14px;
+  margin:12px 0;
+}
+
+/* ===== ชื่อวิชา / ชื่อคอร์ส ===== */
+.course-card h3,
+.course-card h2,
+.course-card .course-title {
+  color: var(--text);
+  font-weight: 600;
+}
+
+
+  /* ================= DARK MODE ================= */
+body.dark{
+  --bg:linear-gradient(135deg,#020617,#0f172a);
+  --card:rgba(30,41,59,.85);
+  --border:rgba(148,163,184,.15);
+  --text:#e5e7eb;
+  --muted:#94a3b8;
+}
+*{box-sizing:border-box}
+  body{margin:0;
+  font-family:Inter,system-ui;
+  background:var(--bg);
+  color:var(--text);
+  transition:.4s;}
+  .hidden{display:none}
+  .muted{color:var(--muted);font-size:14px}
+
+  header{position:sticky;top:0;z-index:10;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px 22px;
+  backdrop-filter:var(--blur);
+  background:rgba(255,255,255,.75);}
+
+  header h1{ margin:0;
+  font-size:22px;
+  background:linear-gradient(90deg,var(--primary),var(--secondary));
+  -webkit-background-clip:text;
+  background-clip: text;
+  -webkit-text-fill-color:transparent;}
+  header nav a{
+  margin-left:16px;
+  cursor:pointer;
+  font-weight:500;
+  color:var(--primary);
+}
+  .container{  max-width:1150px;
+  margin:28px auto;
+  padding:0 20px;}
+
+  .card{background:var(--card);
+  border-radius:var(--radius);
+  padding:24px;
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);}
+
+  .grid{display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:20px;
+}
+  button{border:none;
+  padding:11px 20px;
+  border-radius:999px;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:#fff;
+  cursor:pointer;}
+  button.soft{background:#e0e7ff;color:var(--primary)}
+   
+  .muted{color:#666;font-size:14px}
+  input,select,textarea{width:100%;padding:10px;margin-top:8px;border:1px solid #ddd;border-radius:8px;box-sizing:border-box}
+  .small{padding:6px 8px;font-size:14px}
+  .hidden{display:none}
+  .course-card{
+  padding:12px;
+  border-radius:10px;
+  background:var(--card);   /* ⬅️ แก้บรรทัดนี้ */
+  box-shadow:0 3px 10px rgba(0,0,0,0.04)
+}
+
+
+  .hidden { display: none !important; }
+
+  /* ================= COMMON UI ================= */
+.row{display:flex;justify-content:space-between;align-items:center}
+.right{display:flex;gap:8px}
+.list-item{
+  display:flex;
+  justify-content:space-between;
+  padding:12px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  margin-top:10px;
+}
+.small{font-size:13px;padding:8px 14px}
+.danger{background:#ef4444;color:#fff}
+
+  .success{background:#28a745;color:#fff}
+
+  footer{text-align:center;
+  padding:18px;
+  color:var(--muted);}
+
+  nav a{margin-left:12px;color:var(--primary);cursor:pointer}
+  .modal{position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.4);
+  display:flex;
+  justify-content:center;
+  align-items:center;}
+  .modal-box{background:var(--card);
+  padding:24px;
+  border-radius:18px;
+  width:420px;
+  max-width:90%;}
+
+  .quiz-option{display:block;padding:8px;border-radius:8px;margin-top:8px;border:1px solid #eee}
+  pre{white-space:pre-wrap;background:#f7f7f9;padding:10px;border-radius:8px;overflow:auto}
+  
+  /* FIX ชื่อวิชาไม่ให้ดรอป */
+.course-card h3,
+.course-card h2 {
+  color: var(--text) !important;
+  opacity: 1 !important;
+}
+
+</style>
+</head>
+<body>
+
+<header>
+  <h1>E-Learning (Student & Teacher)</h1>
+  <div id="nav-area">
+    <span id="current-user" class="muted">ยังไม่ได้ล็อกอิน</span>
+    <nav id="nav-links" class="hidden">
+      <a onclick="goHome()">Home</a>
+      <a onclick="toggleTheme()">🌙</a>
+      <a id="nav-switch" onclick="switchMode()">Switch</a>
+      <a onclick="logout()">Logout</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- LOGIN / REGISTER -->
+  <div id="auth" class="card">
+    <h2>เข้าสู่ระบบ / สมัครสมาชิก</h2>
+    <div class="grid">
+      <div>
+        <h3>Login</h3>
+        <input id="login-username" placeholder="username">
+        <input id="login-password" placeholder="password" type="password">
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button onclick="doLogin()">เข้าสู่ระบบ</button>
+          <button class="small" onclick="fillSample()">ตัวอย่าง</button>
+        </div>
+        <p class="muted">ผู้ใช้ตัวอย่าง: teacher/teach123 (ครู) และ student/stud123 (นักเรียน)</p>
+      </div>
+      <div>
+        <h3>Register</h3>
+        <input id="reg-username" placeholder="username (ไม่ซ้ำ)">
+        <input id="reg-display" placeholder="ชื่อที่แสดง">
+        <select id="reg-role">
+          <option value="student">นักเรียน (Student)</option>
+          <option value="teacher">ครู (Teacher)</option>
+        </select>
+        <input id="reg-password" placeholder="รหัสผ่าน" type="password">
+        <button onclick="doRegister()">สมัครสมาชิก</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="main" class="hidden">
+
+    <!-- Student Dashboard -->
+    <div id="student-page" class="card hidden">
+      <div class="row">
+        <h2>แดชบอร์ดนักเรียน</h2>
+        <div class="right">
+          <span id="student-balance" class="muted"></span>
+        </div>
+      </div>
+
+      <h3>คอร์สที่เปิดสอน</h3>
+      <div id="course-list" class="grid"></div>
+
+      <h3 style="margin-top:18px">คอร์สที่ฉันลงทะเบียน</h3>
+      <div id="enrolled-list"></div>
+    </div>
+
+    <!-- Teacher Panel -->
+    <div id="teacher-page" class="card hidden">
+      <div class="row">
+        <h2>ครู — แผงจัดการวิชา</h2>
+        <div class="right">
+          <button onclick="openAddCourse()">+ เพิ่มวิชาใหม่</button>
+        </div>
+      </div>
+
+      <div id="teacher-course-list"></div>
+
+      <h3 style="margin-top:18px">Export / Import data (JSON)</h3>
+      <div class="row">
+        <button onclick="exportData()">Export JSON</button>
+        <input id="import-json" placeholder="วาง JSON ที่นี่" style="flex:1">
+        <button onclick="importData()" class="small">Import</button>
+      </div>
+    </div>
+
+    <!-- Course Manage Modal (teacher) -->
+    <div id="course-manage" class="card hidden">
+      <div class="row">
+        <h2 id="manage-title">จัดการคอร์ส</h2>
+        <div class="right">
+          <button onclick="closeManage()">ปิด</button>
+        </div>
+      </div>
+      <div class="grid">
+        <div>
+          <h3>บทเรียน</h3>
+          <div id="manage-lessons"></div>
+          <input id="new-lesson-title" placeholder="ชื่อบทเรียน">
+          <textarea id="new-lesson-content"
+            rows="7"
+         placeholder="รองรับ HTML ข้อความ วิดีโอ รูปภาพ"></textarea>
+
+          <button onclick="addLesson()">+ เพิ่มบทเรียน</button>
+        </div>
+        <div>
+          <h3>แบบทดสอบ</h3>
+<div id="manage-quizzes"></div>
+
+<select id="quiz-select">
+  <option value="">➕ สร้างแบบทดสอบใหม่</option>
+</select>
+
+<input id="new-quiz-title" placeholder="ชื่อแบบทดสอบ (ใช้เมื่อสร้างใหม่)">
+
+          <input id="new-quiz-question" placeholder="คำถาม">
+          <input id="new-quiz-opt1" placeholder="ตัวเลือก 1">
+          <input id="new-quiz-opt2" placeholder="ตัวเลือก 2">
+          <input id="new-quiz-opt3" placeholder="ตัวเลือก 3 (ไม่บังคับ)">
+          <input id="new-quiz-opt4" placeholder="ตัวเลือก 4 (ไม่บังคับ)">
+          <select id="new-quiz-correct">
+            <option value="0">เลือกคำตอบถูก (1)</option>
+            <option value="1">2</option>
+            <option value="2">3</option>
+            <option value="3">4</option>
+          </select>
+          <button onclick="addQuiz()">+ เพิ่มข้อสอบ</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Course View (student) -->
+    <div id="course-view" class="card hidden">
+      <div class="row">
+        <h2 id="course-title-view">ชื่อคอร์ส</h2>
+        <div class="right">
+          <button onclick="backToStudent()">กลับ</button>
+        </div>
+      </div>
+      <h3>บทเรียน</h3>
+      <div id="course-lessons"></div>
+
+      <h3 style="margin-top:12px">แบบทดสอบ</h3>
+      <div id="course-quizzes"></div>
+    </div>
+
+    <!-- Quiz Modal -->
+<div id="quiz-modal" class="hidden modal">
+  <div class="modal-box">
+    <h3 id="quiz-title-modal" style="margin-bottom: 15px; color: var(--primary);"></h3>
+    <div id="quiz-questions" style="max-height: 60vh; overflow-y: auto; padding-right: 10px;">
+      </div>
+    <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+      <button onclick="submitQuizAttempt()" style="flex: 1;">ส่งแบบทดสอบ</button>
+      <button onclick="closeQuiz()" class="soft small" style="flex: 1; color: #ef4444;">ยกเลิก</button>
+    </div>
+  </div>
+</div>
+
+<!-- Lesson Modal -->
+<div id="lesson-modal" class="hidden modal">
+  <div class="modal-box" style="width:700px;max-width:95%">
+    <div class="row">
+      <h3 id="lesson-modal-title"></h3>
+      <button onclick="closeLesson()" class="small">ปิด</button>
+    </div>
+    <div id="lesson-modal-content" style="margin-top:12px"></div>
+  </div>
+</div>
+
+
+  </div>
+
+  <footer class="muted card hidden" id="footer">End project by </footer>
+</div>
+
+<script>
+    function toggleTheme(){
+  document.body.classList.toggle('dark');
+  const isDark = document.body.classList.contains('dark');
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+
+    if(localStorage.getItem('theme') === 'dark'){
+  document.body.classList.add('dark');
+}
+
+/* ==========================
+   Storage & Seed Data
+   ========================== */
+const KEY = { USERS: 'ele_users_v1', COURSES: 'ele_courses_v1', ATTEMPTS: 'ele_attempts_v1' };
+
+function load() {
+  let users = JSON.parse(localStorage.getItem(KEY.USERS) || 'null');
+  let courses = JSON.parse(localStorage.getItem(KEY.COURSES) || 'null');
+  let attempts = JSON.parse(localStorage.getItem(KEY.ATTEMPTS) || 'null');
+
+  if (!users) {
+    users = [
+      { username:'teacher', display:'ครูผู้สอน', password:'teach123', role:'teacher' },
+      { username:'student', display:'นักเรียนตัวอย่าง', password:'stud123', role:'student' }
+    ];
+    localStorage.setItem(KEY.USERS, JSON.stringify(users));
+  }
+  if (!courses) {
+    courses = [
+      { id:1, code:"3128", name:"การบัญชีภาษีเงินได้บุคคลธรรมดา", description:"คอร์สตัวอย่าง", teacher:'teacher', lessons:[{id:Date.now(),title:'แนะนำ',content:'วิดีโอ/เอกสารแนะนำ'}], quizzes:[] },
+      { id:2, code:"3126", name:"อินเทอร์เน็ตในงานธุรกิจ", description:"คอร์สตัวอย่าง", teacher:'teacher', lessons:[], quizzes:[] }
+    ];
+    localStorage.setItem(KEY.COURSES, JSON.stringify(courses));
+  }
+  if (!attempts) {
+    attempts = [];
+    localStorage.setItem(KEY.ATTEMPTS, JSON.stringify(attempts));
+  }
+}
+load();
+
+/* ==========================
+   App State
+   ========================== */
+let state = {
+  user: null,
+  mode: null, // 'student' or 'teacher' - for UI when logged
+  currentCourseId: null,
+  editingCourseId: null,
+  currentQuizContext: null
+};
+
+function saveUsers(u){ localStorage.setItem(KEY.USERS, JSON.stringify(u)); }
+function saveCourses(c){ localStorage.setItem(KEY.COURSES, JSON.stringify(c)); }
+function saveAttempts(a){ localStorage.setItem(KEY.ATTEMPTS, JSON.stringify(a)); }
+
+function getUsers(){ return JSON.parse(localStorage.getItem(KEY.USERS) || '[]'); }
+function getCourses(){ return JSON.parse(localStorage.getItem(KEY.COURSES) || '[]'); }
+function getAttempts(){ return JSON.parse(localStorage.getItem(KEY.ATTEMPTS) || '[]'); }
+
+/* ==========================
+   AUTH
+   ========================== */
+function fillSample(){
+  document.getElementById('login-username').value = 'teacher';
+  document.getElementById('login-password').value = 'teach123';
+}
+function doLogin(){
+  const u = document.getElementById('login-username').value.trim();
+  const p = document.getElementById('login-password').value;
+  const users = getUsers();
+  const found = users.find(x=>x.username===u && x.password===p);
+  if(!found){ alert('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง'); return; }
+  state.user = found; state.mode = found.role;
+  afterLogin();
+}
+function doRegister(){
+  const uname = document.getElementById('reg-username').value.trim();
+  const display = document.getElementById('reg-display').value.trim() || uname;
+  const role = document.getElementById('reg-role').value;
+  const pass = document.getElementById('reg-password').value;
+  if(!uname||!pass){ alert('กรอก username และ password'); return; }
+  const users = getUsers();
+  if(users.find(u=>u.username===uname)){ alert('มี username นี้แล้ว'); return; }
+  users.push({username:uname,display,role,password:pass});
+  saveUsers(users);
+  alert('สมัครสมาชิกเรียบร้อย ล็อกอินได้เลย');
+  document.getElementById('reg-username').value='';document.getElementById('reg-password').value='';
+}
+function logout(){
+  state.user = null; state.mode = null; state.currentCourseId = null;
+  document.getElementById('auth').classList.remove('hidden');
+  document.getElementById('main').classList.add('hidden');
+  document.getElementById('footer').classList.add('hidden');
+  document.getElementById('nav-links').classList.add('hidden');
+  document.getElementById('current-user').innerText = 'ยังไม่ได้ล็อกอิน';
+}
+function afterLogin(){
+  document.getElementById('auth').classList.add('hidden');
+  document.getElementById('main').classList.remove('hidden');
+  document.getElementById('footer').classList.remove('hidden');
+  document.getElementById('nav-links').classList.remove('hidden');
+  document.getElementById('current-user').innerText = state.user.display + ' ('+state.user.role+')';
+  document.getElementById('nav-switch').innerText = state.mode === 'teacher' ? 'ไปยังมุมมองนักเรียน' : 'ไปยังมุมมองครู';
+  renderByRole();
+}
+
+/* ==========================
+   Render UI
+   ========================== */
+function renderByRole(){
+  document.getElementById('student-page').classList.add('hidden');
+  document.getElementById('teacher-page').classList.add('hidden');
+  document.getElementById('course-manage').classList.add('hidden');
+  document.getElementById('course-view').classList.add('hidden');
+
+  if(state.mode === 'teacher') { renderTeacher(); }
+  else { renderStudent(); }
+}
+
+function switchMode(){
+  if(!state.user) return;
+  state.mode = state.mode === 'teacher' ? 'student' : 'teacher';
+  document.getElementById('nav-switch').innerText = state.mode === 'teacher' ? 'ไปยังมุมมองนักเรียน' : 'ไปยังมุมมองครู';
+  renderByRole();
+}
+
+/* ---------- STUDENT ---------- */
+function renderStudent(){
+  document.getElementById('student-page').classList.remove('hidden');
+  const courses = getCourses();
+  const box = document.getElementById('course-list'); box.innerHTML = '';
+  courses.forEach(c=>{
+    const el = document.createElement('div'); el.className = 'course-card';
+    el.innerHTML = `<h3>${c.name}</h3><p class="muted">${c.code} — ${c.description || ''}</p>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button onclick="viewCourse(${c.id})">เปิดคอร์ส</button>
+        <button onclick="enrollCourse(${c.id})" class="small">ลงทะเบียน</button>
+        <button onclick="bookmarkCourse(${c.id})" class="small">บันทึก</button>
+      </div>`;
+    box.appendChild(el);
+  });
+
+  // enrolled
+  const user = state.user.username;
+  const enrolled = JSON.parse(localStorage.getItem('ele_enrolled_'+user) || '[]');
+  const enbox = document.getElementById('enrolled-list'); enbox.innerHTML = '';
+  if(enrolled.length === 0){ enbox.innerHTML = '<p class="muted">ยังไม่ได้ลงทะเบียนคอร์สใด</p>' }
+  else {
+    enrolled.forEach(id => {
+      const c = courses.find(x=>x.id===id);
+      if(!c) return;
+      const div = document.createElement('div'); div.className='list-item';
+      div.innerHTML = `<div><strong>${c.name}</strong><div class="muted">${c.code}</div></div>
+        <div style="display:flex;gap:8px">
+          <button onclick="viewCourse(${c.id})">เข้าเรียน</button>
+          <button onclick="leaveCourse(${c.id})" class="small">ออก</button>
+        </div>`;
+      enbox.appendChild(div);
+    });
+  }
+}
+
+function enrollCourse(courseId){
+  const user = state.user.username;
+  let enrolled = JSON.parse(localStorage.getItem('ele_enrolled_'+user) || '[]');
+  if(enrolled.includes(courseId)){ alert('ลงทะเบียนแล้ว'); return; }
+  enrolled.push(courseId); localStorage.setItem('ele_enrolled_'+user, JSON.stringify(enrolled));
+  alert('ลงทะเบียนเรียบร้อย');
+  renderStudent();
+}
+function leaveCourse(courseId){
+  const user = state.user.username;
+  let enrolled = JSON.parse(localStorage.getItem('ele_enrolled_'+user) || '[]');
+  enrolled = enrolled.filter(x=>x!==courseId);
+  localStorage.setItem('ele_enrolled_'+user, JSON.stringify(enrolled));
+  renderStudent();
+}
+function viewCourse(id){
+  state.currentCourseId = id;
+  const c = getCourses().find(x=>x.id===id);
+  document.getElementById('course-title-view').innerText = c.name;
+  // lessons
+  const lessonBox = document.getElementById('course-lessons'); lessonBox.innerHTML = '';
+  if(c.lessons.length===0) lessonBox.innerHTML = '<p class="muted">ยังไม่มีบทเรียน</p>';
+  c.lessons.forEach(l=>{
+    const d = document.createElement('div'); d.className='list-item';
+    d.innerHTML = `<div><strong>${l.title}</strong><div class="muted">${l.content}</div></div>
+      <div><button onclick="openLesson('${encodeURIComponent(JSON.stringify(l))}')">เปิด</button></div>`;
+    lessonBox.appendChild(d);
+  });
+  // quizzes
+  const qbox = document.getElementById('course-quizzes'); qbox.innerHTML = '';
+  if(c.quizzes.length===0) qbox.innerHTML = '<p class="muted">ยังไม่มีแบบทดสอบ</p>';
+  c.quizzes.forEach((q,idx)=>{
+    const d = document.createElement('div'); d.className='list-item';
+    d.innerHTML = `<div><strong>${q.title}</strong><div class="muted">${q.questions.length} ข้อ</div></div>
+      <div style="display:flex;gap:8px">
+        <button onclick="startQuiz(${id},${idx})">ทำแบบทดสอบ</button>
+        <button onclick="viewQuizAttempts(${id},${idx})" class="small">สถิติ</button>
+      </div>`;
+    qbox.appendChild(d);
+  });
+
+  document.getElementById('student-page').classList.add('hidden');
+  document.getElementById('course-view').classList.remove('hidden');
+}
+function backToStudent(){
+  state.currentCourseId = null;
+  document.getElementById('course-view').classList.add('hidden');
+  document.getElementById('student-page').classList.remove('hidden');
+}
+function openLesson(encodedLesson){
+  const l = JSON.parse(decodeURIComponent(encodedLesson));
+  document.getElementById('lesson-modal-title').innerText = l.title;
+  document.getElementById('lesson-modal-content').innerHTML = autoEmbed(l.content);
+  document.getElementById('lesson-modal').classList.remove('hidden');
+}
+
+function closeLesson(){
+  document.getElementById('lesson-modal').classList.add('hidden');
+}
+
+
+/* ---------- QUIZ (student) ---------- */
+function startQuiz(courseId, quizIndex){
+  const courses = getCourses(); const course = courses.find(c=>c.id===courseId);
+  const quiz = course.quizzes[quizIndex];
+  state.currentQuizContext = { courseId, quizIndex, quizTitle:quiz.title, questions: quiz.questions, answers: [] };
+  // render modal
+  document.getElementById('quiz-title-modal').innerText = `${course.name} — ${quiz.title}`;
+  const qdiv = document.getElementById('quiz-questions'); qdiv.innerHTML = '';
+  quiz.questions.forEach((q,i)=>{
+    const container = document.createElement('div');
+    container.innerHTML = `<div style="margin-top:10px"><strong>${i+1}. ${q.q}</strong></div>`;
+    q.options.forEach((opt,j)=>{
+      const id = `q_${i}_${j}`;
+      const r = document.createElement('label'); r.className='quiz-option';
+      r.innerHTML = `<input type="radio" name="q${i}" value="${j}" style="margin-right:8px"> ${opt}`;
+      container.appendChild(r);
+    });
+    qdiv.appendChild(container);
+  });
+  document.getElementById('quiz-modal').classList.remove('hidden');
+}
+function closeQuiz(){ document.getElementById('quiz-modal').classList.add('hidden'); state.currentQuizContext=null; }
+function submitQuizAttempt(){
+  const ctx = state.currentQuizContext;
+  if(!ctx) return;
+  const answers = [];
+  let score = 0;
+  ctx.questions.forEach((q,i)=>{
+    const sel = document.querySelector(`input[name="q${i}"]:checked`);
+    const val = sel ? Number(sel.value) : null;
+    answers.push(val);
+    if(val !== null && val === q.correct) score++;
+  });
+  const percent = Math.round(score / ctx.questions.length * 100);
+  // save attempt
+  const attempts = getAttempts();
+  attempts.push({ user: state.user.username, courseId: ctx.courseId, quizIndex: ctx.quizIndex, score, total: ctx.questions.length, percent, timestamp:Date.now() });
+  saveAttempts(attempts);
+  alert(`ส่งแบบทดสอบแล้ว — คะแนน ${score}/${ctx.questions.length} (${percent}%)`);
+  closeQuiz();
+}
+
+/* ---------- QUIZ Stats ---------- */
+function viewQuizAttempts(courseId, quizIndex){
+  const attempts = getAttempts().filter(a=>a.courseId===courseId && a.quizIndex===quizIndex && a.user===state.user.username);
+  if(attempts.length===0){ alert('ยังไม่มีสถิติสำหรับคุณ'); return; }
+  let s = attempts.map(a => {
+    const d = new Date(a.timestamp); return `${d.toLocaleString()}: ${a.score}/${a.total} (${a.percent}%)`;
+  }).join('\n');
+  alert('สถิติการทำแบบทดสอบ:\n\n' + s);
+}
+
+/* ---------- TEACHER ---------- */
+function renderTeacher(){
+  document.getElementById('teacher-page').classList.remove('hidden');
+  const list = document.getElementById('teacher-course-list'); list.innerHTML = '';
+  const courses = getCourses().filter(c=>c.teacher===state.user.username);
+  if(courses.length===0) list.innerHTML = '<p class="muted">คุณยังไม่มีคอร์สที่สอน</p>';
+  courses.forEach(c=>{
+    const div = document.createElement('div'); div.className='card';
+    div.innerHTML = `<div style="display:flex;align-items:center">
+      <div style="flex:1"><h3>${c.name}</h3><div class="muted">${c.code} — ${c.description}</div></div>
+      <div style="display:flex;gap:8px">
+        <button onclick="manageCourse(${c.id})">จัดการ</button>
+        <button class="small" onclick="deleteCourse(${c.id})">ลบ</button>
+      </div>
+    </div>`;
+    list.appendChild(div);
+  });
+}
+
+function openAddCourse(){
+  const name = prompt('ชื่อวิชา');
+  if(!name) return;
+  const code = prompt('รหัสวิชา (เช่น 3128)', '');
+  const desc = prompt('คำอธิบายสั้นๆ', '');
+  const courses = getCourses();
+  const id = Date.now();
+  courses.push({id, code: code || '', name, description: desc || '', teacher: state.user.username, lessons:[], quizzes:[]});
+  saveCourses(courses);
+  renderTeacher();
+}
+
+function deleteCourse(id){
+  if(!confirm('ลบคอร์สเลยหรือไม่?')) return;
+  let cs = getCourses();
+  cs = cs.filter(x=>x.id!==id);
+  saveCourses(cs);
+  renderTeacher();
+}
+
+/* Manage course */
+function manageCourse(id){
+  state.editingCourseId = id;
+  const course = getCourses().find(x=>x.id===id);
+  document.getElementById('manage-title').innerText = 'จัดการ — ' + course.name;
+  document.getElementById('course-manage').classList.remove('hidden');
+  document.getElementById('teacher-page').classList.add('hidden');
+  refreshManage();
+}
+function closeManage(){
+  state.editingCourseId = null;
+  document.getElementById('course-manage').classList.add('hidden');
+  document.getElementById('teacher-page').classList.remove('hidden');
+}
+
+function refreshManage(){
+  const courses = getCourses();
+  const c = courses.find(x=>x.id===state.editingCourseId);
+  const lessonBox = document.getElementById('manage-lessons'); lessonBox.innerHTML = '';
+  c.lessons.forEach((l,idx)=>{
+    const d = document.createElement('div'); d.className='list-item';
+    d.innerHTML = `<div><strong>${l.title}</strong><div class="muted">${l.content}</div></div>
+      <div style="display:flex;gap:6px">
+        <button onclick="editLesson(${idx})" class="small">แก้ไข</button>
+        <button onclick="deleteLesson(${idx})" class="small danger">ลบ</button>
+      </div>`;
+    lessonBox.appendChild(d);
+    /* ===== QUIZ LIST ===== */
+  const quizBox = document.getElementById('manage-quizzes');
+  quizBox.innerHTML = '';
+
+  const quizSelect = document.getElementById('quiz-select');
+  quizSelect.innerHTML = '<option value="">➕ สร้างแบบทดสอบใหม่</option>';
+
+  c.quizzes.forEach((q,qi)=>{
+    // dropdown
+    const opt = document.createElement('option');
+    opt.value = q.title;
+    opt.textContent = q.title;
+    quizSelect.appendChild(opt);
+
+    // list
+    const d = document.createElement('div');
+    d.className = 'list-item';
+    d.innerHTML = `
+      <div>
+        <strong>${q.title}</strong>
+        <div class="muted">${q.questions.length} ข้อ</div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button onclick="previewQuiz(${qi})" class="small">ดู</button>
+        <button onclick="deleteQuiz(${qi})" class="small danger">ลบ</button>
+      </div>`;
+    quizBox.appendChild(d);
+  });
+
+  // ✅ รีเซ็ตช่องชื่อแบบทดสอบทุกครั้ง
+  quizSelect.value = '';
+  document.getElementById('new-quiz-title').classList.remove('hidden');
+  document.getElementById('new-quiz-title').value = '';
+
+
+});
+
+  const quizBox = document.getElementById('manage-quizzes'); quizBox.innerHTML = '';
+  const quizSelect = document.getElementById('quiz-select');
+quizSelect.innerHTML = '<option value="">➕ สร้างแบบทดสอบใหม่</option>';
+
+  c.quizzes.forEach((q,qi)=>{const opt = document.createElement('option');
+opt.value = q.title;
+opt.textContent = q.title;
+quizSelect.appendChild(opt);
+
+    const d = document.createElement('div'); d.className='list-item';
+    d.innerHTML = `<div><strong>${q.title}</strong><div class="muted">${q.questions.length} ข้อ</div></div>
+      <div style="display:flex;gap:6px">
+        <button onclick="previewQuiz(${qi})" class="small">ดู</button>
+        <button onclick="deleteQuiz(${qi})" class="small danger">ลบ</button>
+      </div>`;
+    quizBox.appendChild(d);
+  });
+}
+
+function addLesson(){
+  const title = document.getElementById('new-lesson-title').value.trim();
+  const content = document.getElementById('new-lesson-content').value.trim();
+  if(!title){ alert('กรอกชื่อบทเรียน'); return; }
+  const courses = getCourses();
+  const c = courses.find(x=>x.id===state.editingCourseId);
+  c.lessons.push({ id: Date.now(), title, content });
+  saveCourses(courses);
+  document.getElementById('new-lesson-title').value = '';
+  document.getElementById('new-lesson-content').value = '';
+  refreshManage();
+}
+function editLesson(index){
+  const courses = getCourses(); const c = courses.find(x=>x.id===state.editingCourseId);
+  const l = c.lessons[index];
+  const newTitle = prompt('แก้ไขชื่อบทเรียน', l.title);
+  const newContent = prompt('แก้ไขเนื้อหา', l.content);
+  if(newTitle) l.title = newTitle;
+  if(newContent) l.content = newContent;
+  saveCourses(courses);
+  refreshManage();
+}
+function deleteLesson(index){
+  if(!confirm('ลบบทเรียนนี้?')) return;
+  const courses = getCourses(); const c = courses.find(x=>x.id===state.editingCourseId);
+  c.lessons.splice(index,1); saveCourses(courses); refreshManage();
+}
+
+/* Quizzes */
+function addQuiz(){
+  const selectedQuiz = document.getElementById('quiz-select').value;
+const title = selectedQuiz || document.getElementById('new-quiz-title').value.trim();
+
+  const qtext = document.getElementById('new-quiz-question').value.trim();
+  const opt1 = document.getElementById('new-quiz-opt1').value.trim();
+  const opt2 = document.getElementById('new-quiz-opt2').value.trim();
+  const opt3 = document.getElementById('new-quiz-opt3').value.trim();
+  const opt4 = document.getElementById('new-quiz-opt4').value.trim();
+  const correctIndex = Number(document.getElementById('new-quiz-correct').value);
+
+  if(!title || !qtext || !opt1 || !opt2){ alert('กรอกชื่อแบบทดสอบและคำถามพร้อมตัวเลือกอย่างน้อย 2 ตัว'); return; }
+
+  const options = [opt1,opt2];
+  if(opt3) options.push(opt3);
+  if(opt4) options.push(opt4);
+
+  const courses = getCourses();
+  const c = courses.find(x=>x.id===state.editingCourseId);
+  // if this course has no quizzes or last quiz doesn't have title same, create new quiz container
+  let quiz = c.quizzes.find(q=>q.title===title);
+  if(!quiz){
+    quiz = { title, questions: [] };
+    c.quizzes.push(quiz);
+  }
+  quiz.questions.push({ q: qtext, options, correct: Math.min(correctIndex, options.length-1) }); // safe
+  saveCourses(courses);
+
+  // clear inputs
+  document.getElementById('new-quiz-title').value='';
+  document.getElementById('new-quiz-question').value='';
+  document.getElementById('new-quiz-opt1').value='';
+  document.getElementById('new-quiz-opt2').value='';
+  document.getElementById('new-quiz-opt3').value='';
+  document.getElementById('new-quiz-opt4').value='';
+  refreshManage();
+}
+
+function deleteQuiz(index){
+  if(!confirm('ลบแบบทดสอบทั้งหมดนี้?')) return;
+  const courses = getCourses(); const c = courses.find(x=>x.id===state.editingCourseId);
+  c.quizzes.splice(index,1); saveCourses(courses); refreshManage();
+}
+function previewQuiz(idx){
+  const courses = getCourses(); const c = courses.find(x=>x.id===state.editingCourseId);
+  const q = c.quizzes[idx];
+  // show preview
+  let text = `แบบทดสอบ: ${q.title}\n\n`;
+  q.questions.forEach((qq,i)=> {
+    text += `${i+1}. ${qq.q}\n`;
+    qq.options.forEach((o,j)=> text += `   ${j+1}) ${o}\n`);
+    text += `   คำตอบที่ถูกต้อง: ${qq.correct+1}\n\n`;
+  });
+  alert(text);
+}
+
+/* ==========================
+   Export / Import
+   ========================== */
+function exportData(){
+  const data = {
+    users: getUsers(),
+    courses: getCourses(),
+    attempts: getAttempts()
+  };
+  const s = JSON.stringify(data, null, 2);
+  const w = window.open("", "_blank");
+  w.document.write('<pre>'+s.replace(/</g,'&lt;')+'</pre>');
+}
+
+
+
+function importData(){
+  const raw = document.getElementById('import-json').value.trim();
+  if(!raw){ alert('วาง JSON ที่ต้องการ import'); return; }
+  try{
+    const obj = JSON.parse(raw);
+    if(obj.users) { localStorage.setItem(KEY.USERS, JSON.stringify(obj.users)); }
+    if(obj.courses) { localStorage.setItem(KEY.COURSES, JSON.stringify(obj.courses)); }
+    if(obj.attempts) { localStorage.setItem(KEY.ATTEMPTS, JSON.stringify(obj.attempts)); }
+    alert('นำเข้าเรียบร้อย (รีเฟรชหน้าเพื่อโหลดข้อมูลใหม่)');
+    location.reload();
+  } catch(e){ alert('JSON ไม่ถูกต้อง'); }
+}
+
+/* ==========================
+   Utilities
+   ========================== */
+ function autoEmbed(text){
+  if(!text) return '';
+
+  let html = text.replace(/\n/g,'<br>');
+
+  // YouTube
+  html = html.replace(
+    /(https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)[^\s]*)/g,
+    `
+    <div class="video-wrap">
+      <iframe
+        src="https://www.youtube.com/embed/$2"
+        allowfullscreen
+        loading="lazy">
+      </iframe>
+      <div class="yt-overlay">
+        <a href="$1" target="_blank">▶ เปิดบน YouTube</a>
+      </div>
+    </div>
+    `
+  );
+
+  // Image
+  html = html.replace(
+    /(https?:\/\/[^\s<]+\.(png|jpg|jpeg|gif|webp))/gi,
+    `<img src="$1" class="auto-img">`
+  );
+
+  return html;
+}
+
+
+
+function goHome(){
+  if(!state.user) return;
+  renderByRole();
+  document.getElementById('course-manage').classList.add('hidden');
+  document.getElementById('course-view').classList.add('hidden');
+}
+
+function bookmarkCourse(id){
+  alert('บันทึกคอร์ส (ตัวอย่าง)'); // placeholder
+}
+
+/* initialize (if already logged in) */
+(function init(){
+  // If want auto-login last user, implement here. For now start at login screen.
+  logout();
+})();
+const quizSelectEl = document.getElementById('quiz-select');
+const quizTitleInput = document.getElementById('new-quiz-title');
+
+quizSelectEl.addEventListener('change', () => {
+  if (quizSelectEl.value) {
+    // เลือกแบบทดสอบที่มีอยู่แล้ว
+    quizTitleInput.classList.add('hidden');
+    quizTitleInput.value = quizSelectEl.value; // ใช้ชื่อเดิมอัตโนมัติ (optional)
+  } else {
+    // สร้างแบบทดสอบใหม่
+    quizTitleInput.classList.remove('hidden');
+    quizTitleInput.value = '';
+  }
+});
+
+</script>
+</body>
+</html>
