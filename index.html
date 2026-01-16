@@ -688,16 +688,27 @@ function closeManage(){
 function refreshManage(){
   const courses = getCourses();
   const c = courses.find(x=>x.id===state.editingCourseId);
-  const lessonBox = document.getElementById('manage-lessons'); lessonBox.innerHTML = '';
+
+  /* ===== LESSONS ===== */
+  const lessonBox = document.getElementById('manage-lessons');
+  lessonBox.innerHTML = '';
+
   c.lessons.forEach((l,idx)=>{
-    const d = document.createElement('div'); d.className='list-item';
-    d.innerHTML = `<div><strong>${l.title}</strong><div class="muted">${l.content}</div></div>
+    const d = document.createElement('div');
+    d.className='list-item';
+    d.innerHTML = `
+      <div>
+        <strong>${l.title}</strong>
+        <div class="muted">${l.content}</div>
+      </div>
       <div style="display:flex;gap:6px">
         <button onclick="editLesson(${idx})" class="small">แก้ไข</button>
         <button onclick="deleteLesson(${idx})" class="small danger">ลบ</button>
       </div>`;
     lessonBox.appendChild(d);
-    /* ===== QUIZ LIST ===== */
+  });
+
+  /* ===== QUIZZES ===== */
   const quizBox = document.getElementById('manage-quizzes');
   quizBox.innerHTML = '';
 
@@ -705,15 +716,13 @@ function refreshManage(){
   quizSelect.innerHTML = '<option value="">➕ สร้างแบบทดสอบใหม่</option>';
 
   c.quizzes.forEach((q,qi)=>{
-    // dropdown
     const opt = document.createElement('option');
     opt.value = q.title;
     opt.textContent = q.title;
     quizSelect.appendChild(opt);
 
-    // list
     const d = document.createElement('div');
-    d.className = 'list-item';
+    d.className='list-item';
     d.innerHTML = `
       <div>
         <strong>${q.title}</strong>
@@ -726,32 +735,12 @@ function refreshManage(){
     quizBox.appendChild(d);
   });
 
-  // ✅ รีเซ็ตช่องชื่อแบบทดสอบทุกครั้ง
+  // รีเซ็ตค่าเริ่มต้น
   quizSelect.value = '';
   document.getElementById('new-quiz-title').classList.remove('hidden');
   document.getElementById('new-quiz-title').value = '';
-
-
-});
-
-  const quizBox = document.getElementById('manage-quizzes'); quizBox.innerHTML = '';
-  const quizSelect = document.getElementById('quiz-select');
-quizSelect.innerHTML = '<option value="">➕ สร้างแบบทดสอบใหม่</option>';
-
-  c.quizzes.forEach((q,qi)=>{const opt = document.createElement('option');
-opt.value = q.title;
-opt.textContent = q.title;
-quizSelect.appendChild(opt);
-
-    const d = document.createElement('div'); d.className='list-item';
-    d.innerHTML = `<div><strong>${q.title}</strong><div class="muted">${q.questions.length} ข้อ</div></div>
-      <div style="display:flex;gap:6px">
-        <button onclick="previewQuiz(${qi})" class="small">ดู</button>
-        <button onclick="deleteQuiz(${qi})" class="small danger">ลบ</button>
-      </div>`;
-    quizBox.appendChild(d);
-  });
 }
+
 
 function addLesson(){
   const title = document.getElementById('new-lesson-title').value.trim();
